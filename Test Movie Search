@@ -1,0 +1,71 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov 26 18:59:23 2024
+
+@author: jzoma
+"""
+
+import requests
+import urllib.parse
+
+def Get_Movie_Info(title_or_id):
+    """
+    Fetches and displays information about a movie using the OMDb API.
+    :param title_or_id: The title or IMDb ID of the movie (string).
+    """
+    # URL encode the title to handle spaces or special characters
+    encoded_title = urllib.parse.quote(title_or_id)
+    
+    # Construct the API URL for the movie title with your API key
+    api_url = f"http://www.omdbapi.com/?t={encoded_title}&apikey=73e1ad7b"
+    
+    # Send request to the API
+    results = requests.get(api_url)
+    
+    # Check if the response is successful
+    if results.status_code == 200:
+        myJSON = results.json()  # Parse JSON response
+        
+        # Check if the movie was found
+        if myJSON.get('Response') == 'True':
+            title = myJSON['Title']
+            year = myJSON['Year']
+            rated = myJSON['Rated']
+            released = myJSON['Released']
+            genre = myJSON['Genre']
+            director = myJSON['Director']
+            actors = myJSON['Actors']
+            plot = myJSON['Plot']
+            imdb_rating = myJSON['imdbRating']
+            
+            # Print movie information
+            print(f"\n--- Movie Info ---")
+            print(f"Title: {title}")
+            print(f"Year: {year}")
+            print(f"Rated: {rated}")
+            print(f"Released: {released}")
+            print(f"Genre: {genre}")
+            print(f"Director: {director}")
+            print(f"Actors: {actors}")
+            print(f"Plot: {plot}")
+            print(f"IMDB Rating: {imdb_rating}")
+        else:
+            print(f"\nError: Movie not found. Please check your input or try again later.")
+    else:
+        print(f"\nError: Could not fetch data. HTTP Status Code: {results.status_code}")
+        print(f"Error Message: {results.text}")
+
+def Get_User_Input():
+    """
+    Gets the movie title from the user and calls Get_Movie_Info.
+    """
+    while True:
+        user_input = input("Enter the title or IMDb ID of a movie (or type 'exit' to quit): ").strip()
+        if user_input.lower() == "exit":
+            print("Goodbye!")
+            break
+        else:
+            Get_Movie_Info(user_input)
+
+# Start the program
+Get_User_Input()

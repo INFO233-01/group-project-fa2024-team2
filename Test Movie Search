@@ -60,7 +60,7 @@ def Get_User_Input():
     Gets the movie title from the user and calls Get_Movie_Info.
     """
     while True:
-        user_input = input("Enter the title or IMDb ID of a movie (or type 'exit' to quit): ").strip()
+        user_input = input("Enter the title or IMDb ID of a movie (or type 'exit' to quit): ").strip().capitalize()
         if user_input.lower() == "exit":
             print("Goodbye!")
             break

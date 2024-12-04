@@ -1,32 +1,41 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 26 18:59:23 2024
-
-@author: jzoma
-"""
-
-import requests
 import urllib.parse
+import requests
+
+MAILERSEND_API_KEY = "mlsn.eefab0647dc940294dfd72a77847f8c9397f6b80a6620fbc89ec49183f6f9879"  # Replace with your API key
+
+def send_email(to_email, subject, content):
+    """
+    Sends an email using the MailerSend API.
+    """
+    url = "https://api.mailersend.com/v1/email"
+    headers = {
+        "Authorization": f"Bearer {MAILERSEND_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from": {"email": "no-reply@trial-zr6ke4nkxq94on12.mlsender.net", "name": "Movie Info Bot"},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "text": content
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 202:
+        print(f"Email successfully sent to {to_email}!")
+    else:
+        print(f"Failed to send email. Response: {response.text}")
 
 def Get_Movie_Info(title_or_id):
     """
-    Fetches and displays information about a movie using the OMDb API.
-    :param title_or_id: The title or IMDb ID of the movie (string).
+    Fetches and prints movie information using the OMDb API and prompts user if they want to email it.
     """
-    # URL encode the title to handle spaces or special characters
     encoded_title = urllib.parse.quote(title_or_id)
-    
-    # Construct the API URL for the movie title with your API key
     api_url = f"http://www.omdbapi.com/?t={encoded_title}&apikey=73e1ad7b"
     
-    # Send request to the API
     results = requests.get(api_url)
-    
-    # Check if the response is successful
     if results.status_code == 200:
-        myJSON = results.json()  # Parse JSON response
-        
-        # Check if the movie was found
+        myJSON = results.json()
         if myJSON.get('Response') == 'True':
             title = myJSON['Title']
             year = myJSON['Year']
@@ -38,34 +47,39 @@ def Get_Movie_Info(title_or_id):
             plot = myJSON['Plot']
             imdb_rating = myJSON['imdbRating']
             
-            # Print movie information
-            print(f"\n--- Movie Info ---")
-            print(f"Title: {title}")
-            print(f"Year: {year}")
-            print(f"Rated: {rated}")
-            print(f"Released: {released}")
-            print(f"Genre: {genre}")
-            print(f"Director: {director}")
-            print(f"Actors: {actors}")
-            print(f"Plot: {plot}")
-            print(f"IMDB Rating: {imdb_rating}")
+            # Format the movie information
+            movie_info = (
+                f"--- Movie Info ---\n"
+                f"Title: {title}\nYear: {year}\nRated: {rated}\nReleased: {released}\n"
+                f"Genre: {genre}\nDirector: {director}\nActors: {actors}\n"
+                f"Plot: {plot}\nIMDB Rating: {imdb_rating}\n"
+            )
+            
+            print(movie_info)  # Show in the console
+            
+            # Ask the user if they want to email the info
+            send_email_choice = input("Would you like to email this movie info to yourself? (yes/no): ").strip().lower()
+            if send_email_choice == 'yes':
+                user_email = input("Enter your email address to receive the movie info: ").strip()
+                send_email(user_email, f"Movie Info: {title}", movie_info)
+            else:
+                print("Movie info not sent by email.")
         else:
-            print(f"\nError: Movie not found. Please check your input or try again later.")
+            print("Error: Movie not found.")
     else:
-        print(f"\nError: Could not fetch data. HTTP Status Code: {results.status_code}")
-        print(f"Error Message: {results.text}")
+        print(f"Error: Could not fetch data. HTTP Status Code: {results.status_code}")
 
 def Get_User_Input():
     """
-    Gets the movie title from the user and calls Get_Movie_Info.
+    Gets movie title and email from the user and calls Get_Movie_Info.
     """
     while True:
-        user_input = input("Enter the title or IMDb ID of a movie (or type 'exit' to quit): ").strip().capitalize()
+        user_input = input("Enter the title or IMDb ID of a movie (or type 'exit' to quit): ").strip()
         if user_input.lower() == "exit":
             print("Goodbye!")
             break
-        else:
-            Get_Movie_Info(user_input)
+        
+        Get_Movie_Info(user_input)
 
 # Start the program
 Get_User_Input()

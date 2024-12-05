@@ -1,0 +1,111 @@
+""" Things I did (Christian)
+1. imported webbrowser for adding in a poster option. Added poster as variable in JSON.
+    - Made a while loop asking if they want a pop up of the poster.
+2. Made the print statements look nicer with bold, color, and emojis.
+    -Put the link to how I figured out how to color code above the print statement as a source.
+3. Added a new variable (movieinfo2) because you cant use the color code in email and the poster link was added in this.
+"""
+
+import urllib.parse
+import requests
+import webbrowser
+
+MAILERSEND_API_KEY = "mlsn.eefab0647dc940294dfd72a77847f8c9397f6b80a6620fbc89ec49183f6f9879"  # Replace with your API key
+
+def send_email(to_email, subject, content):
+    """
+    Sends an email using the MailerSend API.
+    """
+    url = "https://api.mailersend.com/v1/email"
+    headers = {
+        "Authorization": f"Bearer {MAILERSEND_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from": {"email": "no-reply@trial-zr6ke4nkxq94on12.mlsender.net", "name": "Movie Info Bot"},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "text": content
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 202:
+        print(f"Email successfully sent to {to_email}!")
+    else:
+        print(f"Failed to send email. Response: {response.text}")
+
+def Get_Movie_Info(title_or_id):
+    """
+    Fetches and prints movie information using the OMDb API and prompts user if they want to email it.
+    """
+    encoded_title = urllib.parse.quote(title_or_id)
+    api_url = f"http://www.omdbapi.com/?t={encoded_title}&apikey=73e1ad7b"
+    
+    results = requests.get(api_url)
+    if results.status_code == 200:
+        myJSON = results.json()
+        if myJSON.get('Response') == 'True':
+            title = myJSON['Title']
+            rated = myJSON['Rated']
+            released = myJSON['Released']
+            genre = myJSON['Genre']
+            director = myJSON['Director']
+            actors = myJSON['Actors']
+            plot = myJSON['Plot']
+            imdb_rating = myJSON['imdbRating']
+            Poster = myJSON['Poster']
+            
+            # Format the movie information
+            # Used this link to change the colors of the print statement: https://www.studytonight.com/python-howtos/how-to-print-colored-text-in-python
+            movie_info = (
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"
+                f"\033[1;34mGenre\033[0m: {genre}\n\033[1;34mDirector\033[0m: {director}\n\033[1;34mActors\033[0m: {actors}\n"
+                f"\033[1;34mPlot\033[0m: {plot}\n\033[1;34mIMDB Rating\033[0m🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+            )
+            
+            print(movie_info)  # Show in the console
+            while True:
+                user_input = input("Would you like to see a pop up of the movie poster? (𝐲𝐞𝐬/𝐧𝐨): ").strip().capitalize()
+                if user_input.lower() == "yes":
+                    webbrowser.open(Poster)
+                    break
+                elif user_input.lower() == "no":
+                    break
+                else:
+                    print("That is not an option. Please type 'yes' if you want to see the poster or 'no' if you want to continue.")
+            # Make a new statement for email and Ask the user if they want to email the info
+            movieinfo2 = (
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"𝐓𝐢𝐭𝐥𝐞: {title}\n𝐑𝐞𝐥𝐞𝐚𝐬𝐞𝐝: {released}\n𝐑𝐚𝐭𝐞𝐝: {rated}\n"
+                f"𝐆𝐞𝐧𝐫𝐞: {genre}\n𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫: {director}\n𝐀𝐜𝐭𝐨𝐫𝐬: {actors}\n"
+                f"𝐏𝐥𝐨𝐭: {plot}\n𝐈𝐌𝐃𝐁 𝐑𝐚𝐭𝐢𝐧𝐠 🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+                f"𝐏𝐨𝐬𝐭𝐞𝐫 𝐋𝐢𝐧𝐤: {Poster}"
+            )
+            
+            send_email_choice = input("Would you like to email this movie info to yourself? (𝐲𝐞𝐬/𝐧𝐨): ").strip().lower()
+            if send_email_choice == 'yes':
+                user_email = input("Enter your email address to receive the movie info: ").strip()
+                send_email(user_email, f"Movie Info: {title}", movieinfo2)
+            else:
+                print("Movie info not sent by email.")
+        else:
+            print("Error: Movie not found.")
+    else:
+        print(f"Error: Could not fetch data. HTTP Status Code: {results.status_code}")
+
+def Get_User_Input():
+    """
+    Gets movie title and email from the user and calls Get_Movie_Info.
+    """
+    while True:
+        user_input = input("Enter the title or IMDb ID of a movie (or type '𝐞𝐱𝐢𝐭' to quit): ").strip()
+        if user_input.lower() == "exit":
+            print("Goodbye!")
+            break
+        
+        Get_Movie_Info(user_input)
+
+# Start the program
+Get_User_Input()

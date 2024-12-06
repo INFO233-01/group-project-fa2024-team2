@@ -1,0 +1,177 @@
+import urllib.parse
+import requests
+import webbrowser
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+# OMDB API Key
+OMDB_API_KEY = "73e1ad7b"  # Replace with your OMDb API key
+
+def send_email(to_email, subject, content):
+    """
+    Sends an email using the built-in smtplib.
+    """
+    # Email credentials and server settings
+    from_email = "movietestcode@gmail.com"  # Used new email
+    from_password = "mdeu rpcm oexq gtsp"  # Replace with a device specfic 2 factor autorization code as the normal passowrd wont work
+    #Used chat gpt to find out why my normal passowrd would not work
+    smtp_server = "smtp.gmail.com" 
+    smtp_port = 587
+
+    # Prepare the email, Info from page you shared in canvas 
+    msg = MIMEMultipart() 
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(content, 'plain')) #Used chat gpt to find out that this is what creates the body of the email
+
+    try:
+        #Used chat gpt to figure out how to send an email and connect to the server to do so
+        # Connect to the SMTP server and send the email
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Secure the connection
+        server.login(from_email, from_password)
+        text = msg.as_string()  # Converts the message to a string  for sending
+        server.sendmail(from_email, to_email, text)   # Send the email from sender to user inputed email
+        server.quit() #stops the connection
+        print(f"Email successfully sent to {to_email}!")
+    except Exception as e: #error exception 
+        print(f"Failed to send email. Error: {e}")
+
+def Get_Movie_Info(title_or_id):
+    """
+    Fetches and prints movie information using the OMDb API and prompts the user if they want to email it.
+    """
+    # Encode the title or IMDb ID to ensure it's safe for URL usage
+    encoded_title = urllib.parse.quote(title_or_id)
+    api_url = f"http://www.omdbapi.com/?t={encoded_title}&apikey={OMDB_API_KEY}"
+
+    # Fetch the movie information using a GET request
+    results = requests.get(api_url)
+    if results.status_code == 200:
+        myJSON = results.json()
+        if myJSON.get('Response') == 'True':
+            # Parse the movie details from the API response
+            title = myJSON['Title']
+            rated = myJSON['Rated']
+            released = myJSON['Released']
+            genre = myJSON['Genre']
+            director = myJSON['Director']
+            actors = myJSON['Actors']
+            plot = myJSON['Plot']
+            imdb_rating = myJSON['imdbRating']
+            Poster = myJSON['Poster']
+
+            # Format the movie information for console display
+            movie_info = (
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"
+                f"\033[1;34mGenre\033[0m: {genre}\n\033[1;34mDirector\033[0m: {director}\n\033[1;34mActors\033[0m: {actors}\n"
+                f"\033[1;34mPlot\033[0m: {plot}\n\033[1;34mIMDB Rating\033[0m🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+            )
+
+            # Format the movie information for email
+            movie_info_email = (
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"𝐓𝐢𝐭𝐥𝐞: {title}\n𝐑𝐞𝐥𝐞𝐚𝐬𝐞𝐝: {released}\n𝐑𝐚𝐭𝐞𝐝: {rated}\n"
+                f"𝐆𝐞𝐧𝐫𝐞: {genre}\n𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫: {director}\n𝐀𝐜𝐭𝐨𝐫𝐬: {actors}\n"
+                f"𝐏𝐥𝐨𝐭: {plot}\n𝐈𝐌𝐃𝐁 𝐑𝐚𝐭𝐢𝐧𝐠 🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+                f"𝐏𝐨𝐬𝐭𝐞𝐫 𝐋𝐢𝐧𝐤: {Poster}"
+            )
+
+            # Display the movie information in the console
+            print(movie_info)
+            while True:
+                # Ask the user if they want to view the poster
+                user_input = input("Would you like to see a pop-up of the movie poster? (yes/no): ").strip().lower()
+                if user_input == "yes":
+                    webbrowser.open(Poster)  # Open the poster in the default browser
+                    break
+                elif user_input == "no":
+                    break
+                else:
+                    print("Invalid input. Please type 'yes' or 'no'.")
+
+            # Ask if the user wants to email the movie details
+            send_email_choice = input("Would you like to email this movie info to yourself? (yes/no): ").strip().lower()
+            if send_email_choice == 'yes':
+                user_email = input("Enter your email address to receive the movie info: ").strip()
+                send_email(user_email, f"Movie Info: {title}", movie_info_email)
+            else:
+                print("Movie info not sent by email.")
+        else:
+            # Handle the cases where the movie is not found
+            print("Error: Movie not found.")
+    else:
+        #Asked chat gpt to find a way to do Error handeling in cases where the API request fails 
+        print(f"Error: Could not fetch data. HTTP Status Code: {results.status_code}")
+
+def Tier_List():
+    """
+    Allows the user to create a tier list of movies, view it, and optionally email it.
+    """
+    # Create a dictionary with tiers as keys and empty lists as values
+    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
+
+    while True:
+        # Ask the user to enter a movie title or exit
+        title = input("Enter the title of a movie to rank (or type 'exit' to finish): ").strip()
+        if title.lower() == "exit":
+            print("\nExiting tier list creation.")
+            break
+
+        # Ask the user to select a ranking for the movie
+        user_choice = input(f"Select a ranking for the movie '{title}' (S, A, B, C, D, E, F): ").strip().upper()
+
+        # Check if the ranking is valid
+        if user_choice in tier:
+            tier[user_choice].append(title)  # Add the movie to the appropriate tier
+            print(f"Added '{title}' to tier {user_choice}.")
+        else:
+            print("Invalid ranking option. Please choose from S, A, B, C, D, E, F.")
+
+    # Display the finalized tier list
+    print("\n--- Final Tier List ---")
+    tier_list_content = ""
+    for rank, movies in tier.items():
+        tier_list_content += f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}\n"
+        print(f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}")
+
+    # Ask the user if they want to email the tier list
+    send_email_choice = input("\nWould you like to email this tier list to yourself? (yes/no): ").strip().lower()
+    if send_email_choice == 'yes':
+        user_email = input("Enter your email address to receive the tier list: ").strip()
+        send_email(user_email, "Your Movie Tier List", tier_list_content)
+        print("Tier list sent via email.")
+    else:
+        print("Tier list not sent by email.")
+
+# Main Menu Loop
+while True:
+    try:
+        # Present the user with options
+        user_choice = float(input(
+            "\n--- Movie Info Program ---\n"
+            "1. Search for a movie\n"
+            "2. Create a movie tier list\n"
+            "3. Quit\n"
+            "Enter your choice: "
+        ))
+
+        if user_choice == 1:
+            print("\nYou have selected to search for a movie.")
+            movie_title = input("Enter the title of a movie or IMDb ID: ").strip()
+            Get_Movie_Info(movie_title)  # Call the movie info function
+        elif user_choice == 2:
+            print("\nYou have selected to create a movie tier list.")
+            Tier_List()  # Call the tier list creation function
+        elif user_choice == 3:
+            # Exit the program
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid option. Please select 1, 2, or 3.")
+    except ValueError:
+        # Handle invalid input 
+        print("Invalid input. Please enter a number (1, 2, or 3).")

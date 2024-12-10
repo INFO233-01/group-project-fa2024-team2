@@ -1,3 +1,4 @@
+
 import urllib.parse
 import requests
 import webbrowser
@@ -16,33 +17,42 @@ def send_email(to_email, subject, content):
     """
     from_email = "movietestcode@gmail.com"  # Used new email
     from_password = "mdeu rpcm oexq gtsp"  # Replace with a device-specific 2-factor authorization code
+    #Used chat gpt to find out why my normal passowrd would not work
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-
+    # Prepare the email, Info from page you shared in canvas 
     msg = MIMEMultipart()
     msg['From'] = from_email
     msg['To'] = to_email
     msg['Subject'] = subject
     msg.attach(MIMEText(content, 'plain'))
-
+#Used chat gpt to find out that this is what creates the body of the email
+# Connect to the SMTP server and send the email
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
+        server.starttls() # Secure the connection
         server.login(from_email, from_password)
-        text = msg.as_string()
-        server.sendmail(from_email, to_email, text)
-        server.quit()
+        text = msg.as_string()# Converts the message to a string  for sending
+        server.sendmail(from_email, to_email, text)  # Send the email from sender to user inputed email
+        server.quit()#stops the connection
         print(f"Email successfully sent to {to_email}!")
-    except Exception as e:
+    except Exception as e:#error exception
         print(f"Failed to send email. Error: {e}")
 
-def is_valid_email(email):
+def is_valid_email(email): #Used ChatGpt to help me make a function that validates the email
     """
     Validates the email format using a simple regex.
     """
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    # ^ is for the start of the email
+    #The things in the bracket is what can be entered before the @  after the @ and following the .
+   
+    
     return re.match(email_regex, email) is not None
-
+    # Check if the email matches the pattern
+    # re.match() returns a match if the email fits the pattern
+    # If the result is NOT None, it means the email is valid, so we return True
+    # If the result is None, the email is not valid, so we return False
 def Get_Movie_Info(title_or_id):
     """
     Fetches and prints movie information using the OMDb API and prompts the user if they want to email it.

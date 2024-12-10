@@ -1,12 +1,12 @@
-#Hi 1
-import urllib.parse
-import requests
-import webbrowser
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import re  # For email validation
-import random
+import urllib.parse #It help you break down URL's to edit specific part to look up
+import requests #Allows HTTP requets to be made
+import webbrowser #Allows automatic opening of default web browser. Used to open Movie Posters
+import smtplib #Allows us to send emails. Recommended by ChatGpt
+from email.mime.multipart import MIMEMultipart 
+#Allows us to send attachments in the email. Used for the link to the posterRecommended by ChatGpt
+from email.mime.text import MIMEText #Allow us to create the body of the email.Recommended by ChatGpt
+import re  # For email validation. Recommended by ChatGpt.
+import random #Allows 'random' decisions tp be made. Used in tier list comment 
 
 # OMDB API Key
 OMDB_API_KEY = "73e1ad7b"  # Replace with your OMDb API key
@@ -128,9 +128,9 @@ def Get_Movie_Info(title_or_id):
         print(f"Error: An error occurred with the request. Details: {e}")
 
 def Tier_List():
-    
-  #  Allows the user to create a tier list of movies, view it, and optionally email it.
-    
+    """
+    Allows the user to create a tier list of movies, view it, and optionally email it.
+    """
     tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
 
     while True:

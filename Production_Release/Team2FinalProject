@@ -65,7 +65,7 @@ def Get_Movie_Info(title_or_id):
         if results.status_code == 200:
             myJSON = results.json()
             if myJSON.get('Response') == 'True':
-                # Parse movie details from the API response
+                # Filter movie details from the API response
                 title = myJSON.get('Title', 'Unknown Title')
                 rated = myJSON.get('Rated', 'N/A')
                 released = myJSON.get('Released', 'Unknown')
@@ -75,7 +75,7 @@ def Get_Movie_Info(title_or_id):
                 plot = myJSON.get('Plot', 'N/A')
                 imdb_rating = myJSON.get('imdbRating', 'N/A')
                 poster = myJSON.get('Poster', 'No poster available')
-
+#Gets info using the api of all the movie info the user inputed 
                 movie_info = (
                 f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
                 f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"
@@ -106,24 +106,30 @@ def Get_Movie_Info(title_or_id):
                 # Ask if user wants to email the movie details
                 while True:
                     send_email_choice = input("Would you like to email this movie info to yourself? (yes/no): ").strip().lower()
+                    # Ask the user if they want to email the movie info to themselves
                     if send_email_choice == 'yes':
                         user_email = input("Enter your email address: ").strip()
+                        # Ask the user to enter their email address
                         if is_valid_email(user_email):
+                            # If the email is valid, send the email with the movie info
                             send_email(user_email, f"Movie Info: {title}", movie_info_email)
                             break
                         else:
+                            # If the email format is invalid, notify the user
                             print("Invalid email format. Please enter a valid email address.")
                     elif send_email_choice == 'no':
                         print("Movie info not sent by email.")
                         break
                     else:
+                        # If the user's input is not "yes" or "no", ask them to try again
                         print("Invalid input. Please type 'yes' or 'no'.")
+            # If the request to the server fails, print an error message with the HTTP status code
+            # If the movie wasn't valid or couldn't be found, let the user know
             else:
                 print("Sorry, the movie wasn't valid or could not be found.")
         else:
             print(f"Error: Could not fetch data. HTTP Status Code: {results.status_code}")
-    except requests.exceptions.Timeout:
-        print("Error: The request timed out. The server did not respond within the allotted time.")
+        # Handle other  request errors like network issues (ChatGpt)
     except requests.exceptions.RequestException as e:
         print(f"Error: An error occurred with the request. Details: {e}")
 

@@ -128,9 +128,9 @@ def Get_Movie_Info(title_or_id):
         print(f"Error: An error occurred with the request. Details: {e}")
 
 def Tier_List():
-    """
-    Allows the user to create a tier list of movies, view it, and optionally email it.
-    """
+    
+  #  Allows the user to create a tier list of movies, view it, and optionally email it.
+    
     tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
 
     while True:

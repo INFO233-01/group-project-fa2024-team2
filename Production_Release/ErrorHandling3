@@ -1,4 +1,3 @@
-**************LIST OF CHANGES ON BOTTOM****************
 import urllib.parse
 import requests
 import webbrowser
@@ -68,18 +67,19 @@ def Get_Movie_Info(title_or_id):
                 poster = myJSON.get('Poster', 'No poster available')
 
                 movie_info = (
-                    f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
-                    f"Title: {title}\nReleased: {released}\nRated: {rated}\nGenre: {genre}\n"
-                    f"Director: {director}\nActors: {actors}\nPlot: {plot}\nIMDB Rating: {imdb_rating}\n"
-                    f"══════════════════════════════"
-                )
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"
+                f"\033[1;34mGenre\033[0m: {genre}\n\033[1;34mDirector\033[0m: {director}\n\033[1;34mActors\033[0m: {actors}\n"
+                f"\033[1;34mPlot\033[0m: {plot}\n\033[1;34mIMDB Rating\033[0m🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+            )
 
-                movie_info_email = (
-                    f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
-                    f"Title: {title}\nReleased: {released}\nRated: {rated}\nGenre: {genre}\n"
-                    f"Director: {director}\nActors: {actors}\nPlot: {plot}\nIMDB Rating: {imdb_rating}\n"
-                    f"Poster Link: {poster}\n══════════════════════════════"
-                )
+                movie_info_email =(
+                f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                f"𝐓𝐢𝐭𝐥𝐞: {title}\n𝐑𝐞𝐥𝐞𝐚𝐬𝐞𝐝: {released}\n𝐑𝐚𝐭𝐞𝐝: {rated}\n"
+                f"𝐆𝐞𝐧𝐫𝐞: {genre}\n𝐃𝐢𝐫𝐞𝐜𝐭𝐨𝐫: {director}\n𝐀𝐜𝐭𝐨𝐫𝐬: {actors}\n"
+                f"𝐏𝐥𝐨𝐭: {plot}\n𝐈𝐌𝐃𝐁 𝐑𝐚𝐭𝐢𝐧𝐠 🎥🍿: {imdb_rating}\n══════════════════════════════\n"
+                f"𝐏𝐨𝐬𝐭𝐞𝐫 𝐋𝐢𝐧𝐤: {poster}"
+            )
 
                 # Display movie info to the user
                 print(movie_info)

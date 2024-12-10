@@ -1,0 +1,205 @@
+**************LIST OF CHANGES ON BOTTOM****************
+import urllib.parse
+import requests
+import webbrowser
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import re  # For email validation
+
+# OMDB API Key
+OMDB_API_KEY = "73e1ad7b"  # Replace with your OMDb API key
+
+def send_email(to_email, subject, content):
+    """
+    Sends an email using the built-in smtplib.
+    """
+    from_email = "movietestcode@gmail.com"  # Used new email
+    from_password = "mdeu rpcm oexq gtsp"  # Replace with a device-specific 2-factor authorization code
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(content, 'plain'))
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(from_email, from_password)
+        text = msg.as_string()
+        server.sendmail(from_email, to_email, text)
+        server.quit()
+        print(f"Email successfully sent to {to_email}!")
+    except Exception as e:
+        print(f"Failed to send email. Error: {e}")
+
+def is_valid_email(email):
+    """
+    Validates the email format using a simple regex.
+    """
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email) is not None
+
+def Get_Movie_Info(title_or_id):
+    """
+    Fetches and prints movie information using the OMDb API and prompts the user if they want to email it.
+    """
+    encoded_title = urllib.parse.quote(title_or_id)
+    api_url = f"http://www.omdbapi.com/?t={encoded_title}&apikey={OMDB_API_KEY}"
+
+    try:
+        results = requests.get(api_url, timeout=10)
+        if results.status_code == 200:
+            myJSON = results.json()
+            if myJSON.get('Response') == 'True':
+                # Parse movie details from the API response
+                title = myJSON.get('Title', 'Unknown Title')
+                rated = myJSON.get('Rated', 'N/A')
+                released = myJSON.get('Released', 'Unknown')
+                genre = myJSON.get('Genre', 'N/A')
+                director = myJSON.get('Director', 'Unknown')
+                actors = myJSON.get('Actors', 'Unknown')
+                plot = myJSON.get('Plot', 'N/A')
+                imdb_rating = myJSON.get('imdbRating', 'N/A')
+                poster = myJSON.get('Poster', 'No poster available')
+
+                movie_info = (
+                    f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                    f"Title: {title}\nReleased: {released}\nRated: {rated}\nGenre: {genre}\n"
+                    f"Director: {director}\nActors: {actors}\nPlot: {plot}\nIMDB Rating: {imdb_rating}\n"
+                    f"══════════════════════════════"
+                )
+
+                movie_info_email = (
+                    f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
+                    f"Title: {title}\nReleased: {released}\nRated: {rated}\nGenre: {genre}\n"
+                    f"Director: {director}\nActors: {actors}\nPlot: {plot}\nIMDB Rating: {imdb_rating}\n"
+                    f"Poster Link: {poster}\n══════════════════════════════"
+                )
+
+                # Display movie info to the user
+                print(movie_info)
+                while True:
+                    user_input = input("Would you like to see the movie poster? (yes/no): ").strip().lower()
+                    if user_input == "yes":
+                        webbrowser.open(poster)  # Open poster in browser
+                        break
+                    elif user_input == "no":
+                        break
+                    else:
+                        print("Invalid input. Please type 'yes' or 'no'.")
+
+                # Ask if user wants to email the movie details
+                while True:
+                    send_email_choice = input("Would you like to email this movie info to yourself? (yes/no): ").strip().lower()
+                    if send_email_choice == 'yes':
+                        user_email = input("Enter your email address: ").strip()
+                        if is_valid_email(user_email):
+                            send_email(user_email, f"Movie Info: {title}", movie_info_email)
+                            break
+                        else:
+                            print("Invalid email format. Please enter a valid email address.")
+                    elif send_email_choice == 'no':
+                        print("Movie info not sent by email.")
+                        break
+                    else:
+                        print("Invalid input. Please type 'yes' or 'no'.")
+            else:
+                print("Sorry, the movie wasn't valid or could not be found.")
+        else:
+            print(f"Error: Could not fetch data. HTTP Status Code: {results.status_code}")
+    except requests.exceptions.Timeout:
+        print("Error: The request timed out. The server did not respond within the allotted time.")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: An error occurred with the request. Details: {e}")
+
+def Tier_List():
+    """
+    Allows the user to create a tier list of movies, view it, and optionally email it.
+    """
+    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
+
+    while True:
+        title = input("Enter the title of a movie to rank (or type 'exit' to finish tier list): ").strip()
+        if title.lower() == "exit":
+            print("\nExiting tier list creation.")
+            break
+    
+        while True:
+            user_choice = input(f"Select a ranking for the movie '{title}' (S, A, B, C, D, E, F): ").strip().upper()
+            if user_choice in tier:
+                tier[user_choice].append(title)
+                print(f"Added '{title}' to tier {user_choice}.")
+                break
+            else:
+                print("Invalid ranking. Please choose from S, A, B, C, D, E, F.")
+    
+    # Display tier list
+    print("\n--- Final Tier List ---")
+    tier_list_content = ""
+    for rank, movies in tier.items():
+        tier_list_content += f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}\n"
+        print(f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}")
+
+    # Ask user if they want to email the tier list
+    send_email_choice = input("\nWould you like to email this tier list to yourself? (yes/no): ").strip().lower()
+    if send_email_choice == 'yes':
+        user_email = input("Enter your email address: ").strip()
+        if is_valid_email(user_email):
+            send_email(user_email, "Your Movie Tier List", tier_list_content)
+            print("Tier list sent via email.")
+        else:
+            print("Invalid email format. Tier list not sent.")
+    else:
+        print("Tier list not sent by email.")
+
+# Main Menu Loop
+while True:
+    try:
+        user_choice = float(input(
+            "\n--- Movie Info Program ---\n"
+            "1. Search for a movie\n"
+            "2. Create a movie tier list\n"
+            "3. Quit\n"
+            "Enter your choice: "
+        ))
+
+        if user_choice == 1:
+            movie_title = input("Enter the title of a movie or IMDb ID: ").strip()
+            Get_Movie_Info(movie_title)
+        elif user_choice == 2:
+            Tier_List()
+        elif user_choice == 3:
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid option. Please select 1, 2, or 3.")
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+
+
+
+
+
+
+
+#errors Found in option 1:
+   # 1. In the Get_Movie_Info function if the request is taking too long their isnt a "timeout" code incase the request takes too long.
+   # 2. When picking option 1, when asked if liked to send movie info to email (y/n), The program automatically says no
+   # when inputing random letters. Program needs to say 'invalid input please enter 'yes' or 'no'
+   # 3. When playing around when asked for IMDb ID I put random letters and numbers, but the program restarded from the top after saying
+    #'Error: Movie not found' Maybe we want the program to ask the user again instead of running it from the beginning"""
+#Errors Fixed in option 1:
+ #   1. added a timeout
+ #   2. Made loop when asked to y/n for
+
+#Errors Found in Option 2:
+    #1. in rating, if input is not in rating choice... program re-asks for movie to rate...
+   # program needs to loop back to rating the movie not repicking the movie again.
+     #2. Seems like you can input any movie name especially if it doesn't exist and still be put into the rankings.(consultate with team on tier function)
+#Errors Fixed in Option 2:
+   # 1. Program reasks user to input valid rating of movie instead of rerunning Tier_list function (made a while True loop)
+   

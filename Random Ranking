@@ -1,0 +1,30 @@
+import random
+
+def Random_Ranking():
+
+    
+    # Provides a random comment about the overall tier list.
+    
+    user_choice=input("Do you want feedback on your tier list? (yes/no): ")
+    if user_choice=='yes':
+
+        comments = [
+            "Wow, this tier list is fantastic! You have great taste.",
+            "Yikes, this tier list is trash. Are you okay?",
+            "A solid effort, but could use some improvements.",
+            "Interesting choices... not sure I agree, but okay.",
+            "This tier list is a true masterpiece.",
+            "Hmm, someone's playing it safe with these rankings.",
+            "Is this a tier list or a cry for help?",
+            "Did a cat walk over your keyboard while you made this?",
+            "This tier list belongs in a museum. Stunning work.",
+            "Well, it's certainly a tier list... I'll give you that."
+        ]
+        
+        # Pick a random comment
+        random_comment = random.choice(comments)
+        print("\n--- Feedback on Your Tier List ---")
+        print(random_comment) 
+        print()
+    else:
+        print("You will not receive tier list feedback.")

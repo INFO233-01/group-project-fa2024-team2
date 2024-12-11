@@ -83,7 +83,7 @@ def Get_Movie_Info(title_or_id):
                 f"\033[1;34mGenre\033[0m: {genre}\n\033[1;34mDirector\033[0m: {director}\n\033[1;34mActors\033[0m: {actors}\n"
                 f"\033[1;34mPlot\033[0m: {plot}\n\033[1;34mIMDB Rating\033[0m🎥🍿: {imdb_rating}\n══════════════════════════════\n"
             )
-
+#Make a new statement for email because it can not include the color codes and also includes poster link.
                 movie_info_email =(
                 f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
                 f"𝐓𝐢𝐭𝐥𝐞: {title}\n𝐑𝐞𝐥𝐞𝐚𝐬𝐞𝐝: {released}\n𝐑𝐚𝐭𝐞𝐝: {rated}\n"

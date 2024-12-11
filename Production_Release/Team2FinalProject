@@ -76,6 +76,7 @@ def Get_Movie_Info(title_or_id):
                 imdb_rating = myJSON.get('imdbRating', 'N/A')
                 poster = myJSON.get('Poster', 'No poster available')
 #Gets info using the api of all the movie info the user inputed 
+#Used https://www.studytonight.com/python-howtos/how-to-print-colored-text-in-python#google_vignette to look up how the color coding worked.
                 movie_info = (
                 f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
                 f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"

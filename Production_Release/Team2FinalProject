@@ -177,7 +177,7 @@ def Tier_List():
         else:
             print("Invalid email format. Tier list not sent.")
     else:
-        print("Tier list not sent by email.")
+        print("\nTier list not sent by email.\n")
 
 def Random_Ranking():
 

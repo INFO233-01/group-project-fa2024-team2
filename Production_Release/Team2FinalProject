@@ -220,7 +220,7 @@ while True:
    "(top tier) to F (bottom tier). Afterward, you can email the tier list to yourself if you'd like. "
    "If you're done using the program, you can simply quit!\n"
             "\n----------Options-----------"
-            "\n\n1. Search for a movie\n"
+            "\n1. Search for a movie\n"
             "2. Create a movie tier list\n"
             "3. Quit\n"
             "\nEnter your choice: "

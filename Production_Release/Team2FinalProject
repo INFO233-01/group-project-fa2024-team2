@@ -140,10 +140,10 @@ def Tier_List():
     """
     tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
     print ("\nA tier list is a visual ranking system that is used to categorize different items,"
-    "like movies in this case. At the very top of the list is the S tier, which is the highest"
-    "you could rank anything. From there, the tier list descends alphabetically starting with A"
-    "and ends with the F tier, which is the lowest you could rank something. This program will"
-    "continue to ask you for a movie and its ranking until you input ‘exit’, which will display"
+    "like movies in this case. At the very top of the list is the S tier, which is the highest "
+    "you could rank anything. From there, the tier list descends alphabetically starting with A "
+    "and ends with the F tier, which is the lowest you could rank something. This program will "
+    "continue to ask you for a movie and its ranking until you input ‘exit’, which will display "
     "your own movie tier list. Choose carefully…")
     while True:
         title = input("\nEnter the title of a movie to rank (or type 'exit' to finish tier list): ").strip()

@@ -212,7 +212,7 @@ def Random_Ranking():
 while True:
     try:
         user_choice = float(input(
-            "\n--- Movie Info Program ---\n"
+            "\n--- Welcome to Movie Meter ---\n"
             "You can search for any movie by title. Once you enter a movie, you'll get detailed information, "
    "including the title, release date, genre, director, actors, plot, and IMDb rating. You'll also have "
    "the option to view the movie poster and email the details to yourself. Want to rank your favorite movies? "

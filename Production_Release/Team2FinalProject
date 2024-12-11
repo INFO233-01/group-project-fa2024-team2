@@ -8,7 +8,8 @@ from email.mime.text import MIMEText #Allow us to create the body of the email.R
 import re  # For email validation. Recommended by ChatGpt.
 import random #Allows 'random' decisions tp be made. Used in tier list comment 
 
-# OMDB API Key
+
+# OMDB API Key2
 OMDB_API_KEY = "73e1ad7b"  # Replace with your OMDb API key
 
 def send_email(to_email, subject, content):
@@ -76,14 +77,13 @@ def Get_Movie_Info(title_or_id):
                 imdb_rating = myJSON.get('imdbRating', 'N/A')
                 poster = myJSON.get('Poster', 'No poster available')
 #Gets info using the api of all the movie info the user inputed 
-#Used https://www.studytonight.com/python-howtos/how-to-print-colored-text-in-python#google_vignette to look up how the color coding worked.
                 movie_info = (
                 f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
                 f"\033[1;34mTitle\033[0m: {title}\n\033[1;34mReleased\033[0m: {released}\n\033[1;34mRated\033[0m: {rated}\n"
                 f"\033[1;34mGenre\033[0m: {genre}\n\033[1;34mDirector\033[0m: {director}\n\033[1;34mActors\033[0m: {actors}\n"
                 f"\033[1;34mPlot\033[0m: {plot}\n\033[1;34mIMDB Rating\033[0m🎥🍿: {imdb_rating}\n══════════════════════════════\n"
             )
-#Make a new statement for email because it can not include the color codes and also includes poster link.
+
                 movie_info_email =(
                 f"---🎬 𝐌𝐨𝐯𝐢𝐞 𝐈𝐧𝐟𝐨 🎬 ---\n══════════════════════════════\n"
                 f"𝐓𝐢𝐭𝐥𝐞: {title}\n𝐑𝐞𝐥𝐞𝐚𝐬𝐞𝐝: {released}\n𝐑𝐚𝐭𝐞𝐝: {rated}\n"
@@ -138,27 +138,32 @@ def Tier_List():
     """
     Allows the user to create a tier list of movies, view it, and optionally email it.
     """
-    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']} # initializes the dictionary with each ranking containing empty lists as values to start
-
+    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
+    print ("\nA tier list is a visual ranking system that is used to categorize different items,"
+    "like movies in this case. At the very top of the list is the S tier, which is the highest"
+    "you could rank anything. From there, the tier list descends alphabetically starting with A"
+    "and ends with the F tier, which is the lowest you could rank something. This program will"
+    "continue to ask you for a movie and its ranking until you input ‘exit’, which will display"
+    "your own movie tier list. Choose carefully…")
     while True:
-        title = input("Enter the title of a movie to rank (or type 'exit' to finish tier list): ").strip()
+        title = input("\nEnter the title of a movie to rank (or type 'exit' to finish tier list): ").strip()
         if title.lower() == "exit":
             print("\nExiting tier list creation.")
             break
     
         while True:
             user_choice = input(f"Select a ranking for the movie '{title}' (S, A, B, C, D, E, F): ").strip().upper()
-            if user_choice in tier: # adds the title to the user's selected ranking
+            if user_choice in tier:
                 tier[user_choice].append(title)
                 print(f"Added '{title}' to tier {user_choice}.")
                 break
             else:
-                print("Invalid ranking. Please choose from S, A, B, C, D, E, F.") # error checking
+                print("Invalid ranking. Please choose from S, A, B, C, D, E, F.")
     
     # Display tier list
     print("\n--- Final Tier List ---")
     tier_list_content = ""
-    for rank, movies in tier.items(): # used to display key-value pairs and join each pair as 1 string that becomes the tier list
+    for rank, movies in tier.items():
         tier_list_content += f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}\n"
         print(f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}")
 
@@ -180,7 +185,7 @@ def Random_Ranking():
     # Provides a random comment about the overall tier list.
     
     user_choice=input("Do you want feedback on your tier list? (yes/no): ")
-    if user_choice.lower()=='yes':
+    if user_choice=='yes':
 
         comments = [
             "Wow, this tier list is fantastic! You have great taste.",
@@ -208,14 +213,21 @@ while True:
     try:
         user_choice = float(input(
             "\n--- Movie Info Program ---\n"
-            "1. Search for a movie\n"
+            "You can search for any movie by title. Once you enter a movie, you'll get detailed information, "
+   "including the title, release date, genre, director, actors, plot, and IMDb rating. You'll also have "
+   "the option to view the movie poster and email the details to yourself. Want to rank your favorite movies? "
+   "This feature lets you create a tier list, where you can assign movies to different rankings like S "
+   "(top tier) to F (bottom tier). Afterward, you can email the tier list to yourself if you'd like. "
+   "If you're done using the program, you can simply quit!"
+            
+            "\n\n1. Search for a movie\n"
             "2. Create a movie tier list\n"
             "3. Quit\n"
-            "Enter your choice: "
+            "\nEnter your choice: "
         ))
 
         if user_choice == 1:
-            movie_title = input("Enter the title of a movie or IMDb ID: ").strip()
+            movie_title = input("Enter the title of a movie: ").strip()
             Get_Movie_Info(movie_title)
         elif user_choice == 2:
             Tier_List()
@@ -227,27 +239,3 @@ while True:
             print("Invalid option. Please select 1, 2, or 3.")
     except ValueError:
         print("Invalid input. Please enter a valid number.")
-
-
-
-
-
-
-
-#errors Found in option 1:
-   # 1. In the Get_Movie_Info function if the request is taking too long their isnt a "timeout" code incase the request takes too long.
-   # 2. When picking option 1, when asked if liked to send movie info to email (y/n), The program automatically says no
-   # when inputing random letters. Program needs to say 'invalid input please enter 'yes' or 'no'
-   # 3. When playing around when asked for IMDb ID I put random letters and numbers, but the program restarded from the top after saying
-    #'Error: Movie not found' Maybe we want the program to ask the user again instead of running it from the beginning"""
-#Errors Fixed in option 1:
- #   1. added a timeout
- #   2. Made loop when asked to y/n for
-
-#Errors Found in Option 2:
-    #1. in rating, if input is not in rating choice... program re-asks for movie to rate...
-   # program needs to loop back to rating the movie not repicking the movie again.
-     #2. Seems like you can input any movie name especially if it doesn't exist and still be put into the rankings.(consultate with team on tier function)
-#Errors Fixed in Option 2:
-   # 1. Program reasks user to input valid rating of movie instead of rerunning Tier_list function (made a while True loop)
-   

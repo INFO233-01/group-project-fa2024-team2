@@ -137,7 +137,7 @@ def Tier_List():
     """
     Allows the user to create a tier list of movies, view it, and optionally email it.
     """
-    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']}
+    tier = {rank: [] for rank in ['S', 'A', 'B', 'C', 'D', 'E', 'F']} # initializes the dictionary with each ranking containing empty lists as values to start
 
     while True:
         title = input("Enter the title of a movie to rank (or type 'exit' to finish tier list): ").strip()
@@ -147,17 +147,17 @@ def Tier_List():
     
         while True:
             user_choice = input(f"Select a ranking for the movie '{title}' (S, A, B, C, D, E, F): ").strip().upper()
-            if user_choice in tier:
+            if user_choice in tier: # adds the title to the user's selected ranking
                 tier[user_choice].append(title)
                 print(f"Added '{title}' to tier {user_choice}.")
                 break
             else:
-                print("Invalid ranking. Please choose from S, A, B, C, D, E, F.")
+                print("Invalid ranking. Please choose from S, A, B, C, D, E, F.") # error checking
     
     # Display tier list
     print("\n--- Final Tier List ---")
     tier_list_content = ""
-    for rank, movies in tier.items():
+    for rank, movies in tier.items(): # used to display key-value pairs and join each pair as 1 string that becomes the tier list
         tier_list_content += f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}\n"
         print(f"{rank} Tier: {', '.join(movies) if movies else 'No movies'}")
 
@@ -179,7 +179,7 @@ def Random_Ranking():
     # Provides a random comment about the overall tier list.
     
     user_choice=input("Do you want feedback on your tier list? (yes/no): ")
-    if user_choice=='yes':
+    if user_choice.lower()=='yes':
 
         comments = [
             "Wow, this tier list is fantastic! You have great taste.",
